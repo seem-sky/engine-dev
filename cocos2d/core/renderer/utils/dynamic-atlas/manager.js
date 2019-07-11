@@ -1,3 +1,11 @@
+/*
+ * @Author: xhe
+ * @Email: xhe@qumitech.com
+ * @Description: 动态合图
+ * @Date: 2019-07-11 11:41:57
+ * @LastEditTime: 2019-07-11 11:49:32
+ * @LastEditors: xhe
+ */
 const Atlas = require('./atlas');
 
 let _atlases = [];
@@ -12,7 +20,7 @@ let _maxFrameSize = 512;
 
 let _debugNode = null;
 
-function newAtlas () {
+function newAtlas() {
     let atlas = _atlases[++_atlasIndex]
     if (!atlas) {
         atlas = new Atlas(_textureSize, _textureSize);
@@ -21,7 +29,7 @@ function newAtlas () {
     return atlas;
 }
 
-function beforeSceneLoad () {
+function beforeSceneLoad() {
     dynamicAtlasManager.reset();
 }
 
@@ -33,17 +41,17 @@ let _enabled = false;
  * @class DynamicAtlasManager
  */
 let dynamicAtlasManager = {
-    
+
     /**
      * !#en Enabled or Disabled dynamic atlas.
      * !#zh 开启或者关闭动态图集。
      * @property enabled
      * @type {Boolean}
      */
-    get enabled () {
+    get enabled() {
         return _enabled;
     },
-    set enabled (value) {
+    set enabled(value) {
         if (_enabled === value) return;
 
         if (value) {
@@ -63,10 +71,10 @@ let dynamicAtlasManager = {
      * @property maxAtlasCount
      * @type {Number}
      */
-    get maxAtlasCount () {
+    get maxAtlasCount() {
         return _maxAtlasCount;
     },
-    set maxAtlasCount (value) {
+    set maxAtlasCount(value) {
         _maxAtlasCount = value;
     },
 
@@ -76,10 +84,10 @@ let dynamicAtlasManager = {
      * @property textureSize
      * @type {Number}
      */
-    get textureSize () {
+    get textureSize() {
         return _textureSize;
     },
-    set textureSize (value) {
+    set textureSize(value) {
         _textureSize = value;
     },
 
@@ -89,10 +97,10 @@ let dynamicAtlasManager = {
      * @property maxFrameSize
      * @type {Number}
      */
-    get maxFrameSize () {
+    get maxFrameSize() {
         return _maxFrameSize;
     },
-    set maxFrameSize (value) {
+    set maxFrameSize(value) {
         _maxFrameSize = value;
     },
 
@@ -100,19 +108,19 @@ let dynamicAtlasManager = {
      * !#en Append a sprite frame into the dynamic atlas.
      * !#zh 添加碎图进入动态图集。
      * @method insertSpriteFrame
-     * @param {SpriteFrame} spriteFrame 
+     * @param {SpriteFrame} spriteFrame
      */
-    insertSpriteFrame (spriteFrame) {
+    insertSpriteFrame(spriteFrame) {
         if (CC_EDITOR) return null;
         if (!_enabled || _atlasIndex === _maxAtlasCount ||
             !spriteFrame || spriteFrame._original) return null;
-        
+
         let texture = spriteFrame._texture;
         if (texture instanceof cc.RenderTexture || texture._isCompressed()) return null;
 
         let w = texture.width, h = texture.height;
         if (w > _maxFrameSize || h > _maxFrameSize || w <= _minFrameSize || h <= _minFrameSize
-         || texture._getHash() !== Atlas.DEFAULT_HASH) {
+            || texture._getHash() !== Atlas.DEFAULT_HASH) {
             return null;
         }
 
@@ -129,12 +137,12 @@ let dynamicAtlasManager = {
         return frame;
     },
 
-    /** 
+    /**
      * !#en Resets all dynamic atlas, and the existing ones will be destroyed.
      * !#zh 重置所有动态图集，已有的动态图集会被销毁。
      * @method reset
     */
-    reset () {
+    reset() {
         for (let i = 0, l = _atlases.length; i < l; i++) {
             _atlases[i].destroy();
         }
@@ -157,8 +165,8 @@ let dynamicAtlasManager = {
                 _debugNode = new cc.Node('DYNAMIC_ATLAS_DEBUG_NODE');
                 _debugNode.width = width;
                 _debugNode.height = height;
-                _debugNode.x = width/2;
-                _debugNode.y = height/2;
+                _debugNode.x = width / 2;
+                _debugNode.y = height / 2;
                 _debugNode.zIndex = cc.macro.MAX_ZINDEX;
                 _debugNode.parent = cc.director.getScene();
 
@@ -180,7 +188,7 @@ let dynamicAtlasManager = {
 
                 for (let i = 0; i <= _atlasIndex; i++) {
                     let node = new cc.Node('ATLAS');
-                    
+
                     let texture = _atlases[i]._texture;
                     let spriteFrame = new cc.SpriteFrame();
                     spriteFrame.setTexture(_atlases[i]._texture);
@@ -200,7 +208,7 @@ let dynamicAtlasManager = {
         }
     },
 
-    update () {
+    update() {
         if (!this.enabled) return;
 
         for (let i = 0; i <= _atlasIndex; i++) {
